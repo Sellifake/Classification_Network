@@ -165,7 +165,6 @@ test_loader  = torch.utils.data.DataLoader(dataset=testset,  batch_size=128, shu
 
 def train(net):
 
-
   current_loss_his = []
   current_Acc_his = []
 
@@ -191,13 +190,16 @@ def train(net):
           optimizer.step()
           total_loss += loss.item()
 
+      # 每个epoch结束后，在验证集上测试一下当前模型的准确率
       net.eval()   # 将模型设置为验证模式
       current_acc = test_acc(net)
       current_Acc_his.append(current_acc)
 
+      # 如果当前准确率大于最好的准确率，就更新最好的准确率和对应的网络参数
       if current_acc > best_acc:
         best_acc = current_acc
         best_net_wts = copy.deepcopy(net.state_dict())
+        torch.save(net.best_net_wts(), 'best_model.pth')
 
       print('[Epoch: %d]   [loss avg: %.4f]   [current loss: %.4f]  [current acc: %.4f]' %(epoch + 1, total_loss/(epoch+1), loss.item(), current_acc))
       current_loss_his.append(loss.item())
@@ -227,8 +229,7 @@ def test_acc(net):
   classification = classification_report(ytest, y_pred_test, digits=4)
   index_acc = classification.find('weighted avg')
   accuracy = classification[index_acc+17:index_acc+23]
-  # 用matplotlib画出全图预测图
-
+  # 加载训练好的模型，在全数据集上进行测试，并画出预测图
   return float(accuracy)
 
 # 测试GPU是否可用

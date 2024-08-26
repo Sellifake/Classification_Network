@@ -1,7 +1,10 @@
 import numpy as np
 from sklearn.decomposition import PCA
 from sklearn.model_selection import train_test_split
-
+import torch
+import os
+import matplotlib.pyplot as plt
+from sklearn.metrics import accuracy_score
 def applyPCA(X, numComponents, is_PCA):
 
     print('\n... ... PCA tranformation ... ...')
@@ -58,9 +61,63 @@ def createImageCubes(X, y, windowSize, removeZeroLabels = True):
     return patchesData, patchesLabels
 
 # 将数据集划分为训练集和测试集
-def splitTrainTestSet(X, y, testRatio, randomState):
+def splitTrainTestSet(X, y, testRatio, randomState, patch_size, pca_components, is_PCA):
     print('\n... ... create train & test data ... ...')
+    if not is_PCA:
+        pca_components = X.shape[2]
+
+    # 分割数据集
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=testRatio, random_state=randomState, stratify=y)
-    print('Xtrain shape: ', X_train.shape)
-    print('Xtest  shape: ', X_test.shape)
-    return X_train, X_test, y_train, y_test
+    print('X_train shape: ', X_train.shape)
+    print('X_test  shape: ', X_test.shape)
+
+    # 改变 Xtrain, Ytrain的形状，以符合 keras 的要求
+    Xtrain = Xtrain.reshape(-1, patch_size, patch_size, pca_components, 1)
+    Xtest  = Xtest.reshape(-1, patch_size, patch_size, pca_components, 1)
+
+    # 为了适应pytorch结构，数据要做transpose
+    X_train = X_train.transpose(0, 4, 3, 1, 2)
+    X_test  = X_test.transpose(0, 4, 3, 1, 2)
+    
+    # 对整个数据集进行同样的操作，用于之后的全数据测试
+    data_test = X.reshape(-1, patch_size, patch_size, pca_components, 1)
+    data_test = data_test.transpose(0, 4, 3, 1, 2)
+    
+    return X_train, X_test, y_train, y_test, data_test
+
+
+# 创建数据集
+class TrainDS(torch.utils.data.Dataset): 
+    def __init__(self, Xtrain, ytrain):
+        self.len = Xtrain.shape[0]
+        self.x_data = torch.FloatTensor(Xtrain)
+        self.y_data = torch.LongTensor(ytrain)        
+
+    def __getitem__(self, index):
+        # 根据索引返回数据和对应的标签
+        return self.x_data[index], self.y_data[index]
+
+    def __len__(self): 
+        # 返回文件数据的数目
+        return self.len
+
+class TestDS(torch.utils.data.Dataset): 
+    def __init__(self, Xtest, ytest):
+        self.len = Xtest.shape[0]
+        self.x_data = torch.FloatTensor(Xtest)
+        self.y_data = torch.LongTensor(ytest)
+
+    def __getitem__(self, index):
+        # 根据索引返回数据和对应的标签
+        return self.x_data[index], self.y_data[index]
+
+    def __len__(self): 
+        # 返回文件数据的数目
+        return self.len
+
+
+
+
+
+
+
