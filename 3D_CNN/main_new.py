@@ -8,12 +8,13 @@ import torch.nn as nn
 import torch.optim as optim
 import copy
 from processing_library import *
-
+import matplotlib.colors as mcolors
+import matplotlib.pyplot as plt
 
 pca_components = 30
 PCA = True
 patch_size = 25
-test_ratio = 0.95
+test_ratio = 0.90
 random_state = 345
 X = sio.loadmat('E:\\Project\\Classification_Network\\3D_CNN\\data\\Indian_pines_corrected.mat')['indian_pines_corrected']
 y = sio.loadmat('E:\\Project\\Classification_Network\\3D_CNN\\data\\Indian_pines_gt.mat')['indian_pines_gt']
@@ -26,19 +27,18 @@ Xtrain, Xtest, ytrain, ytest, data_test = splitTrainTestSet(X_pca, y, test_ratio
 
 trainset = TrainDS(Xtrain, ytrain)
 testset = TestDS(Xtest, ytest)
+full_testset = FullTestDS(data_test, y)
 
 # 创建 DataLoader
 train_loader = torch.utils.data.DataLoader(dataset=trainset, batch_size=128, shuffle=True)
 test_loader = torch.utils.data.DataLoader(dataset=testset, batch_size=128, shuffle=False)
+full_test_loader = torch.utils.data.DataLoader(dataset=full_testset, batch_size=128, shuffle=False)
 
-
-def train(net, is_train, model_path=None):
+def train(net, is_train, model_path):
     current_loss_his = []
     current_Acc_his = []
 
-    # 如果 model_path 没有传入，设置默认路径
-    if model_path is None:
-        model_path = 'E:/Project/Classification_Network/3D_CNN/best_model.pth'
+    model_path = model_path 
 
     if is_train:
         best_net_wts = copy.deepcopy(net.state_dict())
@@ -98,24 +98,25 @@ def train(net, is_train, model_path=None):
     return net, current_loss_his, current_Acc_his
 def test_acc(net):
   
-  count = 0
-  # 模型测试
-  for inputs, _ in test_loader:
-      inputs = inputs.to(device)
-      outputs = net(inputs)
-      outputs = np.argmax(outputs.detach().cpu().numpy(), axis=1)
-      if count == 0:
-          y_pred_test =  outputs
-          count = 1
-      else:
-          y_pred_test = np.concatenate( (y_pred_test, outputs) )
+    count = 0
+    # 模型测试
+    for inputs, _ in test_loader:
+        inputs = inputs.to(device)
+        outputs = net(inputs)
+        outputs = np.argmax(outputs.detach().cpu().numpy(), axis=1)
+        if count == 0:
+            y_pred_test =  outputs
+            count = 1
+        else:
+            y_pred_test = np.concatenate( (y_pred_test, outputs) )
 
-  # 生成分类报告
-  classification = classification_report(ytest, y_pred_test, digits=4)
-  print(classification)
-  index_acc = classification.find('weighted avg')
-  accuracy = classification[index_acc+17:index_acc+23]
-  return float(accuracy)
+    # 生成分类报告
+    classification = classification_report(ytest, y_pred_test, digits=4)
+    index_acc = classification.find('weighted avg')
+    accuracy = classification[index_acc+17:index_acc+23]
+    print("Accuracy without background: %.4f" % (float(accuracy)))
+    return float(accuracy)
+
 
 # 测试GPU是否可用
 if torch.cuda.is_available():
@@ -135,3 +136,56 @@ model_save_path = 'E:/Project/Classification_Network/3D_CNN/best_model.pth'
 # 训练网络
 net, current_loss_his, current_Acc_his = train(net, is_train=False, model_path=model_save_path)
 
+# 全数据集测试
+
+index = 0
+# 全数据测试
+for inputs, _ in full_test_loader:
+    inputs = inputs.to(device)
+    outputs = net(inputs)
+    outputs = np.argmax(outputs.detach().cpu().numpy(), axis=1)
+    if index == 0:
+        y_pred_full =  outputs
+        index = 1
+    else:
+        y_pred_full = np.concatenate( (y_pred_full, outputs) )
+
+y_pred_full = y_pred_full +1
+y_full = y_full.flatten()
+y_pred_full_all = copy.deepcopy(y_full)
+count = 0
+for j in range(len(y_pred_full_all)):
+    if y_pred_full_all[j] != 0:
+        y_pred_full_all[j] = y_pred_full[count]
+        count = count + 1
+
+cmap = mcolors.ListedColormap([
+    'blue',      # 类别0，蓝色
+    'red',       # 类别1
+    'green',     # 类别2
+    'yellow',    # 类别3
+    'purple',    # 类别4
+    'orange',    # 类别5
+    'pink',      # 类别6
+    'brown',     # 类别7
+    'gray',      # 类别8
+    'cyan',      # 类别9
+    'magenta',   # 类别10
+    'lime',      # 类别11
+    'darkred',   # 类别12
+    'lightblue', # 类别13
+    'lightgreen',# 类别14
+    'darkorange',# 类别15
+    'gold'       # 类别16
+])
+
+bounds = np.arange(18) - 0.5  # 17个类别，需要18个边界值
+norm = mcolors.BoundaryNorm(bounds, cmap.N)
+
+y_pred_full_all = y_pred_full_all.reshape((145, 145))
+# 绘制 your_array 图像
+plt.figure(figsize=(8, 8))
+plt.imshow(y_pred_full_all, cmap=cmap, norm=norm)
+plt.colorbar(ticks=np.arange(17))  # 添加颜色条，显示类别编号
+plt.title("Segmentation Result")
+plt.show()

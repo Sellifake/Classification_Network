@@ -2,9 +2,6 @@ import numpy as np
 from sklearn.decomposition import PCA
 from sklearn.model_selection import train_test_split
 import torch
-import os
-import matplotlib.pyplot as plt
-from sklearn.metrics import accuracy_score
 def applyPCA(X, numComponents, is_PCA):
 
     print('\n... ... PCA tranformation ... ...')
@@ -72,8 +69,8 @@ def splitTrainTestSet(X, y, testRatio, randomState, patch_size, pca_components, 
     print('X_test  shape: ', X_test.shape)
 
     # 改变 Xtrain, Ytrain的形状，以符合 keras 的要求
-    Xtrain = Xtrain.reshape(-1, patch_size, patch_size, pca_components, 1)
-    Xtest  = Xtest.reshape(-1, patch_size, patch_size, pca_components, 1)
+    X_train = X_train.reshape(-1, patch_size, patch_size, pca_components, 1)
+    X_test  = X_test.reshape(-1, patch_size, patch_size, pca_components, 1)
 
     # 为了适应pytorch结构，数据要做transpose
     X_train = X_train.transpose(0, 4, 3, 1, 2)
@@ -115,9 +112,16 @@ class TestDS(torch.utils.data.Dataset):
         # 返回文件数据的数目
         return self.len
 
+class FullTestDS(torch.utils.data.Dataset):
+    def __init__(self, FullTest, yfull):
+        self.len = FullTest.shape[0]
+        self.x_data = torch.FloatTensor(FullTest)
+        self.y_data = torch.LongTensor(yfull)
 
+    def __getitem__(self, index):
+        # 根据索引返回数据和对应的标签
+        return self.x_data[index], self.y_data[index]
 
-
-
-
-
+    def __len__(self):
+        # 返回文件数据的数目
+        return self.len
