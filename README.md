@@ -2,7 +2,7 @@
 
 ## 网络1: 3D CNN
 
-- **网络结构图**: [网络结构图](./3D_CNN/network.png)
+- **网络结构图**: ![网络结构图](./3D_CNN/network.png)
     - 网络结构图文件路径: `Classification_Network\3D_CNN`
   
 - **论文原始链接**: [https://ieeexplore.ieee.org/document/8736016](https://ieeexplore.ieee.org/document/8736016)
@@ -20,8 +20,8 @@
     - 数据集介绍和获取: [Hyperspectral_Image_Datasets_Collection](https://github.com/Sellifake/Hyperspectral_Image_Datasets_Collection)
 
 ## 结果展示
-- **GT图像**: [gt](./3D_CNN/gt.png)
-- **预测结果图**: [pred](./3D_CNN/pred.png)
+- **GT图像**: ![gt](./3D_CNN/gt.png)
+- **预测结果图**: ![pred](./3D_CNN/pred.png)
 
 
 ## 分类结果
