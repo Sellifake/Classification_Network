@@ -2,6 +2,11 @@ import numpy as np
 from sklearn.decomposition import PCA
 from sklearn.model_selection import train_test_split
 import torch
+import matplotlib.colors as mcolors
+import matplotlib.pyplot as plt
+import copy
+
+
 def applyPCA(X, numComponents, is_PCA):
 
     print('\n... ... PCA tranformation ... ...')
@@ -125,3 +130,46 @@ class FullTestDS(torch.utils.data.Dataset):
     def __len__(self):
         # 返回文件数据的数目
         return self.len
+
+
+def plot(y_pred_full, y_full):
+    y_pred_full = y_pred_full +1
+    y_full = y_full.flatten()
+    y_pred_full_all = copy.deepcopy(y_full)
+    count = 0
+    for j in range(len(y_pred_full_all)):
+        if y_pred_full_all[j] != 0:
+            y_pred_full_all[j] = y_pred_full[count]
+            count = count + 1
+
+    cmap = mcolors.ListedColormap([
+        'blue',      # 类别0，蓝色
+        'red',       # 类别1
+        'green',     # 类别2
+        'yellow',    # 类别3
+        'purple',    # 类别4
+        'orange',    # 类别5
+        'pink',      # 类别6
+        'brown',     # 类别7
+        'gray',      # 类别8
+        'cyan',      # 类别9
+        'magenta',   # 类别10
+        'lime',      # 类别11
+        'darkred',   # 类别12
+        'lightblue', # 类别13
+        'lightgreen',# 类别14
+        'darkorange',# 类别15
+        'gold'       # 类别16
+    ])
+
+    bounds = np.arange(18) - 0.5  # 17个类别，需要18个边界值
+    norm = mcolors.BoundaryNorm(bounds, cmap.N)
+
+    y_pred_full_all = y_pred_full_all.reshape((145, 145))
+    # 绘制 your_array 图像
+    plt.figure(figsize=(16, 16), dpi=300)
+    plt.imshow(y_pred_full_all, cmap=cmap, norm=norm)
+    plt.colorbar(ticks=np.arange(17))  # 添加颜色条，显示类别编号
+    plt.title("Classification Result")
+    plt.show()
+    

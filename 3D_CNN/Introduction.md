@@ -160,3 +160,24 @@
 
 ---
 
+
+## 7. 网络的改进
+
+- **在原有网络基础上加入了BN（Batch Normalization）**:
+    ```python
+    self.conv3d_features = nn.Sequential(
+        nn.Conv3d(in_channels=in_channels, out_channels=8, kernel_size=(7, 3, 3)),
+        nn.BatchNorm3d(8),
+        nn.ReLU(),
+        nn.Conv3d(in_channels=8, out_channels=16, kernel_size=(5, 3, 3)),
+        nn.BatchNorm3d(16),
+        nn.ReLU(),
+        nn.Conv3d(in_channels=16, out_channels=32, kernel_size=(3, 3, 3)),
+        nn.BatchNorm3d(32),
+        nn.ReLU()
+    )
+    ```
+
+- **说明**:
+    - 在这个改进的网络中，加入了 `Batch Normalization`（BN）层。`BatchNorm3d` 用于在3D卷积神经网络中进行批归一化。
+    - `BN` 的主要作用是在每一层的输出上应用归一化，从而减轻梯度消失或爆炸的现象，并使得网络训练更加稳定、收敛速度更快。此外，BN还有助于减少对初始权重的敏感性，提升模型的泛化能力。
