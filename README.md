@@ -1,15 +1,15 @@
 # 高光谱图像分类网络
 
-## 网络1: 3D CNN
+## 网络: 3D&2D CNN
 
 - **网络结构图**: ![网络结构图](./3D_CNN/network.png)
-    - 网络结构图文件路径: `Classification_Network\3D_CNN`
   
 - **论文原始链接**: [https://ieeexplore.ieee.org/document/8736016](https://ieeexplore.ieee.org/document/8736016)
 
 - **论文原文**: 
-    - 论文文件路径: [pdf](./3D_CNN/HybridSN_Exploring_3-D2-D_CNN_Feature_Hierarchy_for_Hyperspectral_Image_Classification.pdf)
-
+    - 详见: [pdf](./3D_CNN/HybridSN_Exploring_3-D2-D_CNN_Feature_Hierarchy_for_Hyperspectral_Image_Classification.pdf)
+- **代码参考链接**:
+    - 详见: [link](https://wxler.github.io/2021/01/05/173233/)
 ## 改进
 - 在原有网络基础上加入了BN层（Batch Normalization），使得训练更加稳定、收敛速度更快，提升了模型的泛化能力。
 
@@ -17,7 +17,7 @@
 
 ## 数据集
 - **采用数据集**: IP数据集
-    - 数据集介绍和获取: [Hyperspectral_Image_Datasets_Collection](https://github.com/Sellifake/Hyperspectral_Image_Datasets_Collection)
+    - 数据集介绍和获取可通过以下仓库: [Hyperspectral_Image_Datasets_Collection](https://github.com/Sellifake/Hyperspectral_Image_Datasets_Collection)
 
 ## 结果展示
 - **GT图像**: ![gt](./3D_CNN/gt.png)
