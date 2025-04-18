@@ -10,6 +10,7 @@ import torch.optim as optim
 import copy
 from processing_library import *
 
+
 def parse_args():
     parser = argparse.ArgumentParser(description="3D CNN Classification Network Parameters")
 
@@ -47,7 +48,7 @@ def parse_args():
 
     # Path to data directory
     parser.add_argument('--data_path', type=str, default='E:\\Project\\Classification_Network\\3D_CNN\\data\\',
-                        help="Path to the directory containing the dataset (default: 'E:\\Project\\Classification_Network\\3D_CNN\\data\\')")
+                        help="Path to the directory containing the dataset')")
 
     # Path to save or load weights
     parser.add_argument('--weight_path', type=str, default='E:/Project/Classification_Network/3D_CNN/',
@@ -55,6 +56,7 @@ def parse_args():
 
     args = parser.parse_args()
     return args
+
 
 def train(net, is_train, model_path, train_eopch):
     current_loss_his = []
@@ -67,8 +69,8 @@ def train(net, is_train, model_path, train_eopch):
         criterion = nn.CrossEntropyLoss()
         optimizer = optim.Adam(net.parameters(), lr=0.001)
 
-        total_loss = 0
         for epoch in range(train_eopch):
+            total_loss = 0
             net.train()  # 将模型设置为训练模式
             for i, (inputs, labels) in enumerate(train_loader):
                 inputs = inputs.to(device)
@@ -89,7 +91,7 @@ def train(net, is_train, model_path, train_eopch):
                 best_net_wts = copy.deepcopy(net.state_dict())
                 torch.save(best_net_wts, model_path)
 
-            print('[Epoch: %d]   [loss avg: %.4f]   [current loss: %.4f]  [current acc: %.4f]' 
+            print('[Epoch: %d]   [loss avg: %.4f]   [current loss: %.4f]  [current acc: %.4f]'
                   % (epoch + 1, total_loss / (epoch + 1), loss.item(), current_acc))
             current_loss_his.append(loss.item())
 
@@ -110,6 +112,7 @@ def train(net, is_train, model_path, train_eopch):
 
     return net, current_loss_his, current_Acc_his
 
+
 def test_acc(net):
     count = 0
     for inputs, _ in test_loader:
@@ -117,15 +120,16 @@ def test_acc(net):
         outputs = net(inputs)
         outputs = np.argmax(outputs.detach().cpu().numpy(), axis=1)
         if count == 0:
-            y_pred_test =  outputs
+            y_pred_test = outputs
             count = 1
         else:
-            y_pred_test = np.concatenate( (y_pred_test, outputs) )
+            y_pred_test = np.concatenate((y_pred_test, outputs))
 
     classification = classification_report(ytest, y_pred_test, digits=4)
     index_acc = classification.find('weighted avg')
-    accuracy = classification[index_acc+17:index_acc+23]
+    accuracy = classification[index_acc + 17:index_acc + 23]
     return float(accuracy)
+
 
 def full_data_test(net, is_plot):
     index = 0
@@ -134,13 +138,14 @@ def full_data_test(net, is_plot):
         outputs = net(inputs)
         outputs = np.argmax(outputs.detach().cpu().numpy(), axis=1)
         if index == 0:
-            y_pred_full =  outputs
+            y_pred_full = outputs
             index = 1
         else:
-            y_pred_full = np.concatenate( (y_pred_full, outputs) )
+            y_pred_full = np.concatenate((y_pred_full, outputs))
     if is_plot:
         plot(y_pred_full=y_pred_full, y_full=y_full)
     return None
+
 
 if __name__ == "__main__":
     args = parse_args()
@@ -152,7 +157,8 @@ if __name__ == "__main__":
     y_full = y  # 保存包含背景值的y，以便画出整体预测图
     X_pca = applyPCA(X, numComponents=args.pca_components, is_PCA=args.PCA)
     X_pca, y = createImageCubes(X_pca, y, windowSize=args.patch_size)
-    Xtrain, Xtest, ytrain, ytest, data_test = splitTrainTestSet(X_pca, y, args.test_ratio, args.random_state, args.patch_size, args.pca_components, is_PCA=args.PCA)
+    Xtrain, Xtest, ytrain, ytest, data_test = splitTrainTestSet(X_pca, y, args.test_ratio, args.random_state,
+                                                                args.patch_size, args.pca_components, is_PCA=args.PCA)
 
     trainset = TrainDS(Xtrain, ytrain)
     testset = TestDS(Xtest, ytest)
@@ -176,7 +182,8 @@ if __name__ == "__main__":
 
     # 训练
     model_save_path = args.weight_path + 'best_model.pth'
-    net, current_loss_his, current_Acc_his = train(net, is_train=args.is_train, model_path=model_save_path, train_eopch=args.train_epoch)
+    net, current_loss_his, current_Acc_his = train(net, is_train=args.is_train, model_path=model_save_path,
+                                                   train_eopch=args.train_epoch)
 
     # 全数据集预测并画出预测图
     full_data_test(net, is_plot=args.is_plot)
