@@ -58,7 +58,7 @@ def create_dataloaders(
     num_classes: int
 ) -> Tuple[DataLoader, Optional[DataLoader], DataLoader, np.ndarray]: # val_loader 可以是 Optional
     """
-    将数据划分为训练、验证（可选）、测试集，并创建对应的DataLoader。
+    将数据划分为训练、测试集，并创建对应的DataLoader。
     训练集的DataLoader将使用WeightedRandomSampler进行过采样。
     """
     X_train_val, X_test, y_train_val, y_test = train_test_split(

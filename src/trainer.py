@@ -15,7 +15,7 @@ from src.utils import setup_logger
 class Trainer:
     """
     封装了模型的训练、评估和保存等所有相关逻辑。
-    此版本不使用验证集，在训练结束后保存最终模型。
+    在训练结束后保存最终模型。
     """
     def __init__(self,
                  model: nn.Module,
@@ -43,7 +43,7 @@ class Trainer:
         self.model_save_path = os.path.join(self.config['OUTPUT_PATH'], self.config['MODEL_WEIGHTS_NAME'])
         os.makedirs(self.config['OUTPUT_PATH'], exist_ok=True)
 
-    def train(self, train_loader: DataLoader): # 不再需要 val_loader
+    def train(self, train_loader: DataLoader): 
         """
         执行完整的训练流程。在训练结束后保存模型。
         """

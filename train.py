@@ -45,11 +45,11 @@ def main(config_module: types.ModuleType):
     logger.info(f"Total labeled samples for splitting: {len(y_labels)}")
 
     logger.info("Step 3: Creating data loaders...")
-    # create_dataloaders 现在返回 (train_loader, val_loader (Optional), test_loader, train_class_counts)
+
     train_loader, val_loader_maybe, test_loader, train_class_counts = create_dataloaders(
         X_cubes, y_labels,
         test_ratio=cfg_dict['TEST_RATIO'],
-        val_ratio=cfg_dict['VALIDATION_RATIO'], # 设为0则 val_loader_maybe 为 None
+        val_ratio=cfg_dict['VALIDATION_RATIO'], 
         batch_size=cfg_dict['BATCH_SIZE'],
         random_state=cfg_dict['RANDOM_STATE'],
         num_classes=cfg_dict['NUM_CLASSES']
@@ -68,7 +68,7 @@ def main(config_module: types.ModuleType):
     if np.any(train_class_counts == 0):
         logger.warning(f"Original train_class_counts had zeros: {train_class_counts}. Adjusted for weighting: {counts_for_weighting}.")
     
-    if len(train_class_counts) > 0 and np.sum(counts_for_weighting) > 0 : # 确保有东西可以计算权重
+    if len(train_class_counts) > 0 and np.sum(counts_for_weighting) > 0 : # 确保有数值可以计算权重
         raw_weights = 1.0 / counts_for_weighting
         normalized_weights = raw_weights / np.sum(raw_weights)
         class_weights_tensor = torch.FloatTensor(normalized_weights)

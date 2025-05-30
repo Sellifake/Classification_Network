@@ -20,7 +20,7 @@
 
 - **采用数据集**: Indian Pines (IP) 数据集。
 - **数据集介绍和获取**: 可通过以下仓库获取更多高光谱图像数据集信息：[Hyperspectral_Image_Datasets_Collection](https://github.com/Sellifake/Hyperspectral_Image_Datasets_Collection)
-- **数据划分 (示例)**: 本项目支持灵活的数据划分配置。以下结果基于 10% 样本用于训练，90% 样本用于测试的划分。
+- **数据划分**: 以下结果基于 10% 样本用于训练，90% 样本用于测试的划分。
 
 ## 环境依赖
 
@@ -37,10 +37,10 @@
 
 1.  **准备环境**:
     * 克隆或下载本项目到本地。
-    * 确保已安装 Python (推荐 3.8+)。
+    * 确保已安装 Python (3.8+)。
     * 在项目根目录下，通过 `pip install -r requirements.txt` 安装所需依赖。
 2.  **准备数据**:
-    * 将 Indian Pines 数据集的 `.mat` 文件 (例如 `Indian_pines_corrected.mat` 和 `Indian_pines_gt.mat`) 放置在 `./data/` 目录下。
+    * 以Indian Pines 数据集为例：将`.mat` 文件 ( `Indian_pines_corrected.mat` 和 `Indian_pines_gt.mat`) 放置在 `./data/` 目录下。
 3.  **配置参数**:
     * 所有重要的超参数、路径设置、数据划分比例等均可在 `./configs/config.py` 文件中进行修改。
 4.  **训练模型**:
@@ -57,7 +57,7 @@
 
 - **预测结果图 (Prediction)**:
   ![预测结果图](./Display/pred.png)
-  *(请确保此图是基于最新模型和指定颜色方案生成的)*
+
 
 ## 分类结果 (基于10%训练集，90%测试集)
 

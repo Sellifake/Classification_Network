@@ -10,7 +10,7 @@ OUTPUT_PATH = './outputs/'
 # 数据集文件名
 DATASET_NAME = 'Indian_pines'
 # 模型权重保存的文件名
-MODEL_WEIGHTS_NAME = 'final_model.pth' # 因为没有验证集了，可以改个名字
+MODEL_WEIGHTS_NAME = 'final_model.pth' 
 
 # -- 数据预处理配置 --
 # 是否启用PCA降维
@@ -21,11 +21,10 @@ PCA_COMPONENTS = 30
 PATCH_SIZE = 25
 
 # -- 数据集划分配置 --
-# 目标：10% 训练, 0% 验证, 90% 测试
 # 1. 首先划分出90%的测试集
 TEST_RATIO = 0.90
 # 2. 剩余10%全部用于训练，不再划分验证集
-VALIDATION_RATIO = 0.00 # 设置为0，表示不使用验证集
+VALIDATION_RATIO = 0.00 # 不使用验证集
 # 随机种子，用于保证实验结果的可复现性
 RANDOM_STATE = 345
 
