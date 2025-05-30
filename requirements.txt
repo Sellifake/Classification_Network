@@ -1,0 +1,8 @@
+# requirements.txt
+# This file contains the list of Python packages required for this project.
+
+numpy==1.26.3
+torch==2.3.0+cu121
+scikit-learn==1.4.2
+scipy==1.13.0
+matplotlib==3.8.4
